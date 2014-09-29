@@ -1,0 +1,29 @@
+<thead>
+  <tr>
+    <th>Code Bank</th>
+    <th>Bank</th>
+    <th>Option</th>
+  </tr>
+</thead>
+<tbody>
+  <?php
+  if(is_array($data)){
+    foreach ($data as $key => $value) {
+      print "
+  <tr>
+    <td>{$value->title}</td>
+    <td>{$value->code}</td>
+    <td>
+      <div class='btn-group'>
+        <button data-toggle='dropdown' class='btn btn-small dropdown-toggle'>Action<span class='caret'></span></button>
+        <ul class='dropdown-menu'>
+          <li><a href='".site_url("mrp/master-mrp/add-new-bank/".$value->id_mrp_bank)."'>Edit</a></li>
+        </ul>
+      </div>
+    </td>
+  </tr>"
+  ;
+    }
+  }
+  ?>
+</tbody>
