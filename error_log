@@ -1,0 +1,1 @@
+[01-Apr-2013 10:52:25] PHP Fatal error:  Call to undefined method Global_models::query() in /home/k5089013/public_html/sim/application/modules/outlet/controllers/outlet.php on line 336
