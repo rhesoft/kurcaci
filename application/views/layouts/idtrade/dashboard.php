@@ -349,7 +349,7 @@ $category = unserialize($category_temp[1]);
                     </div>
                   </fieldset>
                 </form>
-                <a href="#" class="btn btn-block btn-success">Daftar Gratis!</a>
+                <a href="<?php print site_url("dashboard/register");?>" class="btn btn-block btn-success">Daftar Gratis!</a>
               </div>
             </div>
             <?php }

@@ -4,6 +4,7 @@
         <th>Title</th>
         <th>Lokasi</th>
         <th>Bidang Usaha</th>
+        <th>Point</th>
         <th>Status</th>
         <th>Option</th>
     </tr>
@@ -29,6 +30,7 @@
         <td>'.$value->title.'</td>
         <td>'.$value->lokasi.'</td>
         <td>'.$value->bidang_usaha.'</td>
+        <td>'.$value->point.'</td>
         <td>'.$status[$value->status].'</td>
         <td>
           <div class="btn-group">

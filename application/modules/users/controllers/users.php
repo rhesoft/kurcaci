@@ -117,36 +117,78 @@ class Users extends MX_Controller {
 	public function export_xls(){
     $this->musers->export_xls("data-users");
   }
-	public function index($action = "list", $pesan = "hal", $hal = 0){
-    $list = $this->musers->get();
+  
+//	public function index($action = "list", $pesan = "hal", $hal = 0){
+//    $list = $this->musers->get();
+//    
+//    $css = "<link href='".base_url()."themes/".DEFAULTTHEMES."/css/datatables/dataTables.bootstrap.css' rel='stylesheet' type='text/css' />";
+//    
+//    $foot = "
+//      <script src='".base_url()."themes/".DEFAULTTHEMES."/js/plugins/datatables/jquery.dataTables.js' type='text/javascript'></script>
+//      <script src='".base_url()."themes/".DEFAULTTHEMES."/js/plugins/datatables/dataTables.bootstrap.js' type='text/javascript'></script>
+//      ";
+//    $foot .= '
+//            <script type="text/javascript">
+//                $(function() {
+//                    $("#tableboxy").dataTable();
+//                });
+//            </script>';
+//    $menutable = "<li><a href='".site_url("users/add-new")."'><i class='icon-plus'></i> Add New</a></li>";
+//    $this->template->build('main', 
+//      array(
+//            'url'         => base_url()."themes/".DEFAULTTHEMES."/",
+//            'menu'        => 'users',
+//            'data'    => $list,
+//            'title'   => "Users",
+//            'foot'    => $foot,
+//            'css'     => $css,
+//            'menutable'   => $menutable,
+//          ));
+//    $this->template
+//      ->set_layout('datatables')
+//      ->build('main');
+//	}
+  
+  function index(){
+    $jumlah_list = $this->global_models->get_field("m_users", "count(id_users)", array());
     
-    $css = "<link href='".base_url()."themes/".DEFAULTTHEMES."/css/datatables/dataTables.bootstrap.css' rel='stylesheet' type='text/css' />";
-    
-    $foot = "
-      <script src='".base_url()."themes/".DEFAULTTHEMES."/js/plugins/datatables/jquery.dataTables.js' type='text/javascript'></script>
-      <script src='".base_url()."themes/".DEFAULTTHEMES."/js/plugins/datatables/dataTables.bootstrap.js' type='text/javascript'></script>
-      ";
-    $foot .= '
-            <script type="text/javascript">
-                $(function() {
-                    $("#tableboxy").dataTable();
-                });
-            </script>';
+    $url_list = site_url("users/ajax-users/".$jumlah_list);
+    $url_list_halaman = site_url("users/ajax-halaman-users/".$jumlah_list);
+    $foot = <<<EOD
+      <script>
+            
+            function get_list(start){
+                  if(typeof start === "undefined"){
+                    start = 0;
+                  }
+                  $.post('{$url_list}/'+start, function(data){
+                    $("#data_list").html(data);
+                    $.post('{$url_list_halaman}/'+start, function(data){
+                      $("#halaman_set").html(data);
+                    });
+                  });
+            }
+            get_list(0);
+      </script>
+EOD;
+
     $menutable = "<li><a href='".site_url("users/add-new")."'><i class='icon-plus'></i> Add New</a></li>";
     $this->template->build('main', 
       array(
             'url'         => base_url()."themes/".DEFAULTTHEMES."/",
             'menu'        => 'users',
-            'data'    => $list,
             'title'   => "Users",
             'foot'    => $foot,
             'css'     => $css,
             'menutable'   => $menutable,
+            'menu_action' => 4
           ));
     $this->template
-      ->set_layout('datatables')
+      ->set_layout('tableajax')
       ->build('main');
-	}
+
+  }
+  
   public function edit_profile($pesan = "hal"){
     $id = $this->session->userdata("id");
     $this->template->title('Sistem', "Users Edit");
@@ -407,6 +449,73 @@ class Users extends MX_Controller {
       }
       redirect("portal/master-portal/company");
     }
+  }
+  
+  function ajax_users($total = 0, $start = 0){
+    
+    $users = $this->global_models->get_query("
+      SELECT A.*, B.point
+      FROM m_users AS A
+      LEFT JOIN biodata AS B ON A.id_users = B.id_users
+      ORDER BY name
+      LIMIT {$start}, 10
+      ");
+    $status = array(
+        0 => "<span class='label label-warning'>Non-Active</span>",
+        1 => "<span class='label label-success'>Active</span>",
+        2 => "<span class='label label-warning'>Non-Active</span>",
+    );
+    foreach($users AS $users){
+      $hasil .= "<tr>"
+        . "<td>{$users->name}</td>"
+        . "<td>{$users->email}</td>"
+        . "<td>{$users->point}</td>"
+        . "<td>{$status[$users->id_status_user]}</td>"
+        . "<td>"
+          . "<div class='btn-group'>"
+          . "<button data-toggle='dropdown' class='btn btn-small dropdown-toggle'>Action<span class='caret'></span></button>"
+          . "<ul class='dropdown-menu'>"
+          . "<li><a href='".site_url("users/add-new/".$users->id_users)."'>Edit</a></li>"
+          . "<li><a href='".site_url("users/generate-password/".$users->id_users)."'>Generate Password</a></li>"
+          . "<li><a href='".site_url("users/email-pass/".$users->id_users)."'>Email Password</a></li>"
+          . "<li><a href='".site_url("users/biodata/".$users->id_users)."'>Biodata</a></li>"
+          . "</ul>"
+          . "</div>"
+        . "</td>"
+        . "</tr>";
+    }
+    
+    print $hasil;
+    die;
+  }
+  
+  function ajax_halaman_users($total = 0, $start = 0){
+    
+    $this->load->library('pagination');
+
+    $config['base_url'] = '';
+    $config['total_rows'] = $total;
+    $config['per_page'] = 10; 
+    $config['uri_segment'] = 4; 
+    $config['cur_tag_open'] = "<li class='active'><a href='javascript:void(0)'>"; 
+    $config['cur_tag_close'] = "</a></li>"; 
+    $config['first_tag_open'] = "<li>"; 
+    $config['first_tag_close'] = "</li>"; 
+    $config['last_tag_open'] = "<li>"; 
+    $config['last_tag_close'] = "</li>"; 
+    $config['next_tag_open'] = "<li>"; 
+    $config['next_tag_close'] = "</li>"; 
+    $config['prev_tag_open'] = "<li>"; 
+    $config['prev_tag_close'] = "</li>"; 
+    $config['num_tag_open'] = "<li>"; 
+    $config['num_tag_close'] = "</li>";
+    $config['function_js'] = "get_list";
+    $this->pagination->initialize($config); 
+    
+      print "<ul id='halaman_delete' class='pagination pagination-sm no-margin pull-right'>"
+    . "{$this->pagination->create_links_ajax()}"
+    . "</ul>";
+    die;
   }
   
 }
