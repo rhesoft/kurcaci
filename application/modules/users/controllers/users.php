@@ -181,7 +181,7 @@ EOD;
             'foot'    => $foot,
             'css'     => $css,
             'menutable'   => $menutable,
-            'menu_action' => 4
+            'menu_action' => 5
           ));
     $this->template
       ->set_layout('tableajax')
@@ -479,6 +479,7 @@ EOD;
           . "<li><a href='".site_url("users/generate-password/".$users->id_users)."'>Generate Password</a></li>"
           . "<li><a href='".site_url("users/email-pass/".$users->id_users)."'>Email Password</a></li>"
           . "<li><a href='".site_url("users/biodata/".$users->id_users)."'>Biodata</a></li>"
+          . "<li><a href='".site_url("users/history-point/".$users->id_users)."'>History Point</a></li>"
           . "</ul>"
           . "</div>"
         . "</td>"
@@ -516,6 +517,26 @@ EOD;
     . "{$this->pagination->create_links_ajax()}"
     . "</ul>";
     die;
+  }
+  
+  function history_point($id_users){
+    $list = $this->global_models->get_query("SELECT A.*"
+      . " FROM portal_point_history AS A");
+    
+    $menutable = '
+      <li><a href="'.site_url("users/add-history-point").'"><i class="icon-plus"></i> Add History Point</a></li>
+      ';
+    $this->template->build('history-point', 
+      array(
+            'url'         => base_url()."themes/".DEFAULTTHEMES."/",
+            'menu'        => "users",
+            'data'        => $list,
+            'title'       => lang("portal_history_point"),
+            'menutable'   => $menutable,
+          ));
+    $this->template
+      ->set_layout('datatables')
+      ->build('history-point');
   }
   
 }

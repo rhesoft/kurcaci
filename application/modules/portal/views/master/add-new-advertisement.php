@@ -8,7 +8,7 @@
             </div><!-- /.box-header -->
             <!-- form start -->
             <?php print $this->form_eksternal->form_open_multipart("", 'role="form"', 
-                    array("id_detail" => $detail[0]->id_portal_promo))?>
+                    array("id_detail" => $detail[0]->id_portal_advertisement))?>
               <div class="box-body">
 
                 <div class="control-group">
@@ -40,7 +40,7 @@
 
                 <div class="control-group">
                   <label>Status</label>
-                    <?php print $this->form_eksternal->form_dropdown('status', array('1' => "Draft", '2' => "Cancel", '3' => "Aktif", 4 => "Prioritas", 5 => "Pengumuman", 6 => "Default"), array($detail[0]->status), 'class="form-control input-sm"')?>
+                    <?php print $this->form_eksternal->form_dropdown('status', array('1' => "Draft", '2' => "Default", '3' => "Aktif"), array($detail[0]->status), 'class="form-control input-sm"')?>
                 </div>
 
                 <div class="control-group">

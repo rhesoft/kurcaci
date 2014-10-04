@@ -4,21 +4,6 @@ class Home extends MX_Controller {
     
   function __construct() {      
     
-    $this->load->library('template');
-    $this->load->library('form_eksternal');
-    $this->load->library('global_models');
-    $this->load->library('PHPExcel');
-    $this->load->library('encrypt');
-    $this->load->helper('path');
-    $this->load->helper('url');
-    $this->load->helper('form');
-    $this->load->helper('cookie');
-    $this->load->library('parser');
-    $this->load->library('session');
-    $this->load->library('form_validation');
-    $this->load->library('pagination');
-    $this->load->library('email');
-    $this->menu = $this->cek();
     
 //    $this->debug($this->menu, true);
   }

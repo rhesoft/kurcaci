@@ -1,6 +1,7 @@
 <thead>
     <tr>
         <th>Gambar</th>
+        <th>Title</th>
         <th>Company</th>
         <th>Start Date</th>
         <th>End Date</th>
@@ -16,8 +17,9 @@
           1 => "<span class='label label-default'>Draft</span>",
           2 => "<span class='label label-denger'>Cancel</span>",
           3 => "<span class='label label-success'>Active</span>",
-          4 => "<span class='label label-info'>Prioritas</span>",
+          4 => "<span class='label label-warning'>Prioritas</span>",
           5 => "<span class='label label-primary'>Pengumuman</span>",
+          6 => "<span class='label label-info'>Default</span>",
       );
       
       if($value->gambar)
@@ -29,6 +31,7 @@
       <tr>
         <td><img src="'.$gambar.'" width="100"></td>
         <td>'.$value->title.'</td>
+        <td>'.$value->company.'</td>
         <td>'.$value->start_date.'</td>
         <td>'.$value->end_date.'</td>
         <td>'.$status[$value->status].'</td>

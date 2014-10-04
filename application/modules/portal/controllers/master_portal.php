@@ -30,7 +30,9 @@ class Master_portal extends MX_Controller {
   }
   
   function promo(){
-    $list = $this->global_models->get("portal_promo");
+    $list = $this->global_models->get_query("SELECT A.*, B.title AS company"
+      . " FROM portal_promo AS A"
+      . " LEFT JOIN portal_company AS B ON A.id_portal_company = B.id_portal_company");
     
     $menutable = '
       <li><a href="'.site_url("portal/master-portal/add-new-promo").'"><i class="icon-plus"></i> Add New</a></li>
@@ -46,6 +48,25 @@ class Master_portal extends MX_Controller {
     $this->template
       ->set_layout('datatables')
       ->build('master/promo');
+  }
+  
+  function advertisement(){
+    $list = $this->global_models->get("portal_advertisement");
+    
+    $menutable = '
+      <li><a href="'.site_url("portal/master-portal/add-new-advertisement").'"><i class="icon-plus"></i> Add New</a></li>
+      ';
+    $this->template->build('master/advertisement', 
+      array(
+            'url'         => base_url()."themes/".DEFAULTTHEMES."/",
+            'menu'        => "portal/master-portal/advertisement",
+            'data'        => $list,
+            'title'       => lang("portal_advertisement"),
+            'menutable'   => $menutable,
+          ));
+    $this->template
+      ->set_layout('datatables')
+      ->build('master/advertisement');
   }
   
   function lokasi(){
@@ -348,6 +369,122 @@ class Master_portal extends MX_Controller {
         $this->session->set_flashdata('notice', 'Data tidak tersimpan');
       }
       redirect("portal/master-portal/promo");
+    }
+  }
+  
+  public function add_new_advertisement($id_portal_advertisement = 0){
+    if(!$this->input->post(NULL)){
+      $detail = $this->global_models->get("portal_promo", array("id_portal_promo" => $id_portal_advertisement));
+      
+      $css = "<link href='".base_url()."themes/".DEFAULTTHEMES."/css/jQueryUI/jquery-ui-1.10.3.custom.min.css' rel='stylesheet' type='text/css' />"
+        . "<link href='".base_url()."themes/".DEFAULTTHEMES."/css/datepicker/datepicker3.css' rel='stylesheet' type='text/css' />";
+      $foot = "
+        <script src='".base_url()."themes/".DEFAULTTHEMES."/js/jquery.ui.autocomplete.min.js' type='text/javascript'></script>
+        <script src='".base_url()."themes/".DEFAULTTHEMES."/js/plugins/datepicker/bootstrap-datepicker.js' type='text/javascript'></script>
+        <script type='text/javascript'>
+            $(function() {
+              $( '#portal_company' ).autocomplete({
+                source: '".site_url("portal/master-portal/auto-company")."',
+                minLength: 1,
+                select: function( event, ui ) {
+                  $('#id_portal_company').val(ui.item.id);
+                }
+              });
+              
+              $( '#start_date' ).datepicker({
+                showOtherMonths: true,
+                format: 'yyyy-mm-dd',
+                selectOtherMonths: true,
+                selectOtherYears: true
+              });
+              
+              $( '#end_date' ).datepicker({
+                showOtherMonths: true,
+                format: 'yyyy-mm-dd',
+                selectOtherMonths: true,
+                selectOtherYears: true
+              });
+            });
+        </script>
+        ";
+      
+      $this->template->build("master/add-new-advertisement", 
+        array(
+              'url'         => base_url()."themes/".DEFAULTTHEMES."/",
+              'menu'        => 'portal/master-portal/advertisement',
+              'title'       => "Create advertisement",
+              'detail'      => $detail,
+              'breadcrumb'  => array(
+                    "Company"  => "portal/master-portal/advertisement"
+                ),
+              'css'         => $css,
+              'foot'        => $foot
+            ));
+      $this->template
+        ->set_layout('form')
+        ->build("master/add-new-advertisement");
+    }
+    else{
+      $pst = $this->input->post(NULL);
+      
+      $config['upload_path'] = './files/portal/advertisement/';
+      $config['allowed_types'] = 'gif|jpg|png';
+      $config['max_width']  = '400';
+      $config['max_height']  = '400';
+
+      $this->load->library('upload', $config);
+      
+      if($_FILES['gambar']['name']){
+        if (  $this->upload->do_upload('gambar')){
+          $data = array('upload_data' => $this->upload->data());
+        }
+        else{
+          print $this->upload->display_errors();
+          print "<br /> <a href='".site_url("portal/master-portal/add-new-advertisement/".$id_portal_advertisement)."'>Back</a>";
+          die;
+        }
+      }
+      
+      if($pst['id_detail']){
+        $kirim = array(
+            "title"           => $pst['title'],
+            "nicename"        => $this->global_models->nicename($pst['title'], "portal_advertisement", "id_portal_advertisement"),
+            "id_portal_company" => $pst['id_portal_company'],
+            "start_date"      => $pst['start_date'],
+            "end_date"        => $pst['end_date'],
+            "link"            => $pst['link'],
+            "status"          => $pst['status'],
+            "update_by_users" => $this->session->userdata("id"),
+        );
+        if($data['upload_data']['file_name']){
+          $kirim['gambar'] = $data['upload_data']['file_name'];
+        }
+        $id_portal_advertisement = $this->global_models->update("portal_advertisement", array("id_portal_advertisement" => $pst['id_detail']),$kirim);
+      }
+      else{
+        $kirim = array(
+            "title"           => $pst['title'],
+            "nicename"        => $this->global_models->nicename($pst['title'], "portal_advertisement", "id_portal_advertisement"),
+            "id_portal_company" => $pst['id_portal_company'],
+            "start_date"      => $pst['start_date'],
+            "end_date"        => $pst['end_date'],
+            "link"            => $pst['link'],
+            "status"          => $pst['status'],
+            "create_by_users" => $this->session->userdata("id"),
+            "create_date"     => date("Y-m-d")
+        );
+        if($data['upload_data']['file_name']){
+          $kirim['gambar'] = $data['upload_data']['file_name'];
+        }
+        $id_portal_advertisement = $this->global_models->insert("portal_advertisement", $kirim);
+      }
+      if($id_portal_advertisement){
+        $this->session->set_flashdata('success', 'Data tersimpan');
+      }
+      else{
+        $this->session->set_flashdata('notice', 'Data tidak tersimpan');
+      }
+      redirect("portal/master-portal/advertisement");
     }
   }
   

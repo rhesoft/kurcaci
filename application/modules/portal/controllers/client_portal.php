@@ -34,6 +34,37 @@ class Client_portal extends MX_Controller {
   }
   
   private function form_promo($detail){
+    $css = "<link href='".base_url()."themes/".DEFAULTTHEMES."/css/jQueryUI/jquery-ui-1.10.3.custom.min.css' rel='stylesheet' type='text/css' />"
+        . "<link href='".base_url()."themes/".DEFAULTTHEMES."/css/datepicker/datepicker3.css' rel='stylesheet' type='text/css' />";
+    $foot = "
+      <script src='".base_url()."themes/".DEFAULTTHEMES."/js/jquery.ui.autocomplete.min.js' type='text/javascript'></script>
+      <script src='".base_url()."themes/".DEFAULTTHEMES."/js/plugins/datepicker/bootstrap-datepicker.js' type='text/javascript'></script>
+      <script type='text/javascript'>
+          $(function() {
+            $( '#portal_company' ).autocomplete({
+              source: '".site_url("portal/master-portal/auto-company")."',
+              minLength: 1,
+              select: function( event, ui ) {
+                $('#id_portal_company').val(ui.item.id);
+              }
+            });
+
+            $( '#start_date' ).datepicker({
+              showOtherMonths: true,
+              format: 'yyyy-mm-dd',
+              selectOtherMonths: true,
+              selectOtherYears: true
+            });
+
+            $( '#end_date' ).datepicker({
+              showOtherMonths: true,
+              format: 'yyyy-mm-dd',
+              selectOtherMonths: true,
+              selectOtherYears: true
+            });
+          });
+      </script>
+      ";
     $this->template->build("client/add-new-promo", 
       array(
             'url'         => base_url()."themes/".DEFAULTTHEMES."/",
@@ -43,6 +74,8 @@ class Client_portal extends MX_Controller {
             'breadcrumb'  => array(
                   "Promo"  => "portal/client-portal/promo"
               ),
+              'css'       => $css,
+              'foot'       => $foot,
           ));
     $this->template
       ->set_layout('form')

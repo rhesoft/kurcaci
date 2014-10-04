@@ -21,7 +21,7 @@
       );
       
       if($value->gambar)
-        $gambar = base_url()."files/portal/promo/{$value->gambar}";
+        $gambar = base_url()."files/portal/advertisement/{$value->gambar}";
       else
         $gambar = base_url()."files/no-pic.png";
       
@@ -36,7 +36,7 @@
           <div class="btn-group">
             <button data-toggle="dropdown" class="btn btn-small dropdown-toggle">Action<span class="caret"></span></button>
             <ul class="dropdown-menu">
-              <li><a href="'.site_url("portal/client-portal/add-promo/".$value->id_portal_promo).'">Edit</a></li>
+              <li><a href="'.site_url("portal/master-portal/add-new-promo/".$value->id_portal_promo).'">Edit</a></li>
             </ul>
           </div>
         </td>

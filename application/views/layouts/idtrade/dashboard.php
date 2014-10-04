@@ -100,10 +100,10 @@ $category = unserialize($category_temp[1]);
                   $sub_category_temp = $this->nbscache->get_explode("sub-category", $key);
                   $sub_category = unserialize($sub_category_temp[1]);
                   print "<li>"
-                  . "<a href='javascript:void(0);' class='btn btn-primary btn-block'>{$cate['name']}</a>"
+                  . "<a href='javascript:void(0);' class='btn btn-primary btn-block' style='text-align: left; white-space: normal'>{$cate['name']}</a>"
                   . "<ul class='subkategori-nav'>";
                   foreach($sub_category AS $key_sub => $subcate){
-                    print "<li><a href='".site_url("kategori/sub/".$subcate['nicename'])."' class='btn btn-primary btn-block'>{$subcate['name']}</a></li>";
+                    print "<li><a href='".site_url("produk/kategori/".$subcate['nicename'])."' class='btn btn-primary btn-block'>{$subcate['name']}</a></li>";
                   }
                   print "</ul>"
                   . "</li>";
@@ -127,12 +127,12 @@ $category = unserialize($category_temp[1]);
                 </div>                
                 <div class="collapse navbar-collapse" id="main-navbar-collapse">
                   <ul class="nav navbar-nav">
-                    <li class="active"><a href="<?php print site_url()?>"><span class="glyphicon glyphicon-home"></span> &nbsp;Home</a></li>
-                    <li><a href="<?php print site_url("perusahaan")?>">Perusahaan</a></li>
-                    <li><a href="<?php print site_url("produk")?>">Produk</a></li>
-                    <li><a href="<?php print site_url("kategori")?>">Kategori</a></li>
-                    <li><a href<?php print site_url("penawaran-barang")?>">Penawaran Barang</a></li>
-                    <li><a href="<?php print site_url("permintaan-barang")?>">Permintaan Barang</a></li>
+                    <li class="<?php print $menu_atas['home']?>"><a href="<?php print site_url()?>"><span class="glyphicon glyphicon-home"></span> &nbsp;Home</a></li>
+                    <li class="<?php print $menu_atas['perusahaan']?>"><a href="<?php print site_url("perusahaan")?>">Perusahaan</a></li>
+                    <li class="<?php print $menu_atas['produk']?>"><a href="<?php print site_url("produk")?>">Produk</a></li>
+                    <li class="<?php print $menu_atas['kategori']?>"><a href="<?php print site_url("kategori")?>">Kategori</a></li>
+                    <li class="<?php print $menu_atas['penawaran-barang']?>"><a href<?php print site_url("penawaran-barang")?>">Penawaran Barang</a></li>
+                    <li class="<?php print $menu_atas['permintaan-barang']?>"><a href="<?php print site_url("permintaan-barang")?>">Permintaan Barang</a></li>
                   </ul>
 <!--                  <form class="navbar-form navbar-right" role="search">
                     <div class="form-group">
@@ -152,165 +152,7 @@ $category = unserialize($category_temp[1]);
           <!-- end of navigation -->
 
           <!-- content -->
-          <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-            <div class="slide" style="background:#333; width:100%; height: 300px;">
-              <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
-                <!-- Indicators -->
-                <ol class="carousel-indicators">
-                  <?php
-                  $ke = 0;
-                  foreach($slide AS $sld){
-                    foreach($sld AS $sld_view){
-                      if($ke == 0){
-                        $active = "active";
-                      }
-                      else{
-                        $active = "";
-                      }
-                      
-                      print "<li data-target='#carousel-example-generic' data-slide-to='{$ke}' class='{$active}'></li>";
-                      $data_slide .= "<div class='item {$active}'>"
-                        . "<a href='".site_url($sld_view->link)."'><img src='".base_url()."/files/portal/promo/{$sld_view->gambar}' alt='{$sld_view->title}'></a>"
-                        . "<div class='carousel-caption'>{$sld_view->title}</div></div>";
-                      $ke++;
-                    }
-                  }
-                  ?>
-                </ol>
-
-                <!-- Wrapper for slides -->
-                <div class="carousel-inner">
-                  <?php print $data_slide;?>
-                </div>
-
-                <!-- Controls -->
-                <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
-                  <span class="glyphicon glyphicon-chevron-left"></span>
-                </a>
-                <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
-                  <span class="glyphicon glyphicon-chevron-right"></span>
-                </a>
-              </div>
-            </div>
-
-            <div style="clear:both;height:1em;"></div>
-
-            <!-- new products -->
-            <div class="new-products">
-              <div class="panel panel-default">
-                <div class="panel-heading">
-                  Produk Terbaru
-                </div>
-                <div class="panel-body">
-                  <div class="col-sm-6 col-md-6 col-lg-3">
-                      <div style="background:#333; width:100px; height: 100px; margin:0 auto;"></div>
-                      <p class="products-name"><a href="#">Produk baru 1</a></p>
-                  </div>  
-                  <div class="col-sm-6 col-md-6 col-lg-3">
-                      <div style="background:#333; width:100px; height: 100px; margin:0 auto;"></div>
-                      <p class="products-name"><a href="#">Produk baru 1</a></p>
-                  </div>  
-                  <div class="col-sm-6 col-md-6 col-lg-3">
-                      <div style="background:#333; width:100px; height: 100px; margin:0 auto;"></div>
-                      <p class="products-name"><a href="#">Produk baru 1</a></p>
-                  </div>  
-                  <div class="col-sm-6 col-md-6 col-lg-3">
-                      <div style="background:#333; width:100px; height: 100px; margin:0 auto;"></div>
-                      <p class="products-name"><a href="#">Produk baru 1</a></p>
-                  </div>
-                  <div class="col-sm-6 col-md-6 col-lg-3">
-                      <div style="background:#333; width:100px; height: 100px; margin:0 auto;"></div>
-                      <p class="products-name"><a href="#">Produk baru 1</a></p>
-                  </div>  
-                  <div class="col-sm-6 col-md-6 col-lg-3">
-                      <div style="background:#333; width:100px; height: 100px; margin:0 auto;"></div>
-                      <p class="products-name"><a href="#">Produk baru 1</a></p>
-                  </div>  
-                  <div class="col-sm-6 col-md-6 col-lg-3">
-                      <div style="background:#333; width:100px; height: 100px; margin:0 auto;"></div>
-                      <p class="products-name"><a href="#">Produk baru 1</a></p>
-                  </div>  
-                  <div class="col-sm-6 col-md-6 col-lg-3">
-                      <div style="background:#333; width:100px; height: 100px; margin:0 auto;"></div>
-                      <p class="products-name"><a href="#">Produk baru 1</a></p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <!-- end of new products -->
-
-            <div style="clear:both;height:1em;"></div>
-
-            <div class="promo-tab">
-              <ul class="nav nav-tabs">
-                <li class="active"><a href="#penawaran-barang" data-toggle="tab">Penawaran Barang</a></li>
-                <li><a href="#permintaan-barang" data-toggle="tab">Permintaan Barang</a></li>
-              </ul>
-              <div id="myTabContent" class="tab-content">
-                <div class="tab-pane fade in active" id="penawaran-barang">
-                  <div class="penawaran-barang-wrapper">
-                    <div class="col-lg-8">
-                      <ul class="promo-list">
-                        <li><a href="#">Link 1: The quick brown fox jumps over the lazy dog</a></li>
-                        <li><a href="#">Link 1: The quick brown fox jumps over the lazy dog</a></li>
-                        <li><a href="#">Link 1: The quick brown fox jumps over the lazy dog</a></li>
-                        <li><a href="#">Link 1: The quick brown fox jumps over the lazy dog</a></li>
-                      </ul>
-                    </div>
-                    <div class="col-lg-4" style="padding:1em 0;">
-                      <p>
-                        <strong>PT Abs Sejahtera Abadi</strong><br />
-                        [<span class="glyphicon glyphicon-star"></span> Gold Member]
-                        <br />
-                        <a href="#">Lihat halaman perusahaan</a>
-                        <a href="#">Lihat penawaran barang</a>
-                      </p>
-                    </div>
-                  </div>                  
-                </div>
-                <div class="tab-pane fade" id="permintaan-barang">
-                  <div class="permintaan-barang-wrapper">
-                    <div class="col-lg-8">
-                      <ul class="promo-list">
-                        <li><a href="#">Link 1: The quick brown fox jumps over the lazy dog. Lorem ipsum dolor sit amet</a></li>
-                        <li><a href="#">Link 1: The quick brown fox jumps over the lazy dog. Consectectur adispiscing elit</a></li>
-                        <li><a href="#">Link 1: The quick brown fox jumps over the lazy dog</a></li>
-                        <li><a href="#">Link 1: The quick brown fox jumps over the lazy dog</a></li>
-                      </ul>
-                    </div>
-                    <div class="col-lg-4" style="padding:1em 0;">
-                      <p>
-                        <strong>PT Abs Sejahtera Abadi</strong><br />
-                        [<span class="glyphicon glyphicon-star"></span> Gold Member]
-                        <br />
-                        <a href="#">Lihat halaman perusahaan</a>
-                        <a href="#">Lihat permintaan barang</a>
-                      </p>
-                    </div>
-                  </div>
-                  <div class="permintaan-barang-wrapper">
-                    <div class="col-lg-8">
-                      <ul class="promo-list">
-                        <li><a href="#">Link 1: The quick brown fox jumps over the lazy dog</a></li>
-                        <li><a href="#">Link 1: The quick brown fox jumps over the lazy dog</a></li>
-                        <li><a href="#">Link 1: The quick brown fox jumps over the lazy dog</a></li>
-                        <li><a href="#">Link 1: The quick brown fox jumps over the lazy dog</a></li>
-                      </ul>
-                    </div>
-                    <div class="col-lg-4" style="padding:1em 0;">
-                      <p>
-                        <strong>PT BCS Makmur Abadi</strong><br />
-                        [<span class="glyphicon glyphicon-star"></span><span class="glyphicon glyphicon-star"></span> Platinum Member]
-                        <br />
-                        <a href="#">Lihat halaman perusahaan</a>
-                        <a href="#">Lihat permintaan barang</a>
-                      </p>
-                    </div>
-                  </div>                 
-                </div>
-              </div>
-            </div>
-          </div>
+          <?php print $template['body']?>
           <!-- end of content -->
 
           <!-- right sidebar -->
@@ -322,6 +164,36 @@ $category = unserialize($category_temp[1]);
               <div class="panel-body">
                 <form class="form-horizontal" action="<?php print site_url("dashboard/login")?>" method="post">
                   <fieldset>
+                    <div class="form-group">
+                      <legend>Masuk</legend>
+                      <div class="col-lg-8" style="width: 100%">
+                        <input type="text" class="form-control" name="email" id="inputEmail" placeholder="Email" style="padding: 5px 5px;height: inherit;font-size: 12px; width: 40%">
+                        <input type="password" class="form-control" name="sandi" id="inputPassword" placeholder="Password" style="padding: 5px 5px;height: inherit; font-size: 12px; width: 40%; ">
+                        <input type="text" style="display: none" name="lokasi" value="<?php print uri_string()?>">
+                        <button type="submit" value="login" name="submit" class="btn btn-primary btn-sm">Masuk</button>
+                      </div>
+                      <div class="col-lg-8" style="width: 100%">
+                        <a href="#" class="text-right">Lupa password?</a>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <legend>Mendaftar</legend>
+                      <div class="col-lg-8" style="width: 100%">
+                        <input type="text" class="form-control" name="first_name" placeholder="Nama Depan" style="padding: 5px 5px;height: inherit;font-size: 12px; width: 49%">
+                        <input type="password" class="form-control" name="last_name" placeholder="Nama Belakang" style="padding: 5px 5px;height: inherit; font-size: 12px; width: 49%; ">
+                      </div>
+                      <div class="col-lg-8" style="width: 100%">
+                        <input type="text" class="form-control" name="daftar_email" placeholder="Email" style="padding: 5px 5px;height: inherit;font-size: 12px; width: 99%">
+                      </div>
+                      <div class="col-lg-8" style="width: 100%">
+                        <input type="text" class="form-control" name="pass" placeholder="Password" style="padding: 5px 5px;height: inherit;font-size: 12px; width: 99%">
+                      </div>
+                      <div class="col-lg-8" style="width: 100%">
+                        <input type="text" class="form-control" name="re_pass" placeholder="Masukkan lagi Password" style="padding: 5px 5px;height: inherit;font-size: 12px; width: 99%">
+                      </div>
+                    </div>
+                  </fieldset>
+<!--                  <fieldset>
                     <legend>Masuk</legend>
                     <div class="form-group">
                       <label for="inputEmail" class="col-lg-4 control-label">Email</label>
@@ -334,11 +206,11 @@ $category = unserialize($category_temp[1]);
                       <label for="inputPassword" class="col-lg-4 control-label">Password</label>
                       <div class="col-lg-8">
                         <input type="password" class="form-control" name="sandi" id="inputPassword" placeholder="Password">
-<!--                        <div class="checkbox">
+                        <div class="checkbox">
                           <label>
                             <input type="checkbox"> Remember me
                           </label>
-                        </div>-->
+                        </div>
                       </div>
                     </div>
                     <div class="form-group">
@@ -347,9 +219,11 @@ $category = unserialize($category_temp[1]);
                         <a href="#" class="text-right">Lupa password?</a>
                       </div>
                     </div>
-                  </fieldset>
+                  </fieldset>-->
+                
+                <button type="submit" value="daftar" class="btn btn-block btn-success" name="submit">Daftar Gratis!</button>
                 </form>
-                <a href="<?php print site_url("dashboard/register");?>" class="btn btn-block btn-success">Daftar Gratis!</a>
+                <!--<a href="<?php print site_url("dashboard/register");?>" class="btn btn-block btn-success"></a>-->
               </div>
             </div>
             <?php }
@@ -374,16 +248,23 @@ $category = unserialize($category_temp[1]);
                 </ul>
               </div>
             </div>
-            <?php }?>
-            <div class="col-sm-6 col-md-12 col-lg-12 adv">
-              <img src="<?php print $url?>img/adv-rectangle.jpg" />
-            </div>
-            <div class="col-sm-6 col-md-12 col-lg-12 adv">
-              
-            </div>
-            <div class="col-sm-6 col-md-12 col-lg-12 adv">
-              <img src="<?php print $url?>img/adv-rectangle.jpg" />
-            </div>
+            <?php }
+            foreach($ads['inti'] AS $inti){
+              print "<div class='col-sm-6 col-md-12 col-lg-12 adv'>"
+              . "<img src='".base_url()."/files/portal/advertisement/{$inti->gambar}' width='330' height='300' />"
+              . "</div>"
+              . "<div class='col-sm-6 col-md-12 col-lg-12 adv'>"
+              . "</div>";
+            }
+            foreach($ads['tambahan'] AS $tambahan){
+              print "<div class='col-sm-6 col-md-12 col-lg-12 adv'>"
+              . "<img src='".base_url()."/files/portal/advertisement/{$tambahan->gambar}' width='330' height='300' />"
+              . "</div>"
+              . "<div class='col-sm-6 col-md-12 col-lg-12 adv'>"
+              . "</div>";
+            }
+            ?>
+            
           </div>
           <!-- end of right sidebar -->
         </div>
@@ -396,7 +277,7 @@ $category = unserialize($category_temp[1]);
                 <ul class="footer-provinsi">
                   <?php
                   foreach($provinsi AS $prov){
-                    print "<li><a href='".site_url("propinsi/{$prov->nicename}")."'>{$prov->title}</a></li>";
+                    print "<li><a href='".site_url("produk/propinsi/{$prov->nicename}")."'>{$prov->title}</a></li>";
                   }
                   ?>
                 </ul>

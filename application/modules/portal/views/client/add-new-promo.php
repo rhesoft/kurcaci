@@ -16,7 +16,7 @@
                   <?php print $this->form_eksternal->form_input('title', $detail[0]->title, 'class="form-control input-sm" placeholder="Title"');?>
                 </div>
                 <?php
-                if(!$detail[0]->id_portal_promo){
+                if(!$detail[0]->id_portal_promo OR $detail[0]->status != 4){
                 ?>
                 <div class="control-group">
                   <label>Start Date</label>
