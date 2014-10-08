@@ -180,16 +180,16 @@ $category = unserialize($category_temp[1]);
                       <legend>Mendaftar</legend>
                       <div class="col-lg-8" style="width: 100%">
                         <input type="text" class="form-control" name="first_name" placeholder="Nama Depan" style="padding: 5px 5px;height: inherit;font-size: 12px; width: 49%">
-                        <input type="password" class="form-control" name="last_name" placeholder="Nama Belakang" style="padding: 5px 5px;height: inherit; font-size: 12px; width: 49%; ">
+                        <input type="text" class="form-control" name="last_name" placeholder="Nama Belakang" style="padding: 5px 5px;height: inherit; font-size: 12px; width: 49%; ">
                       </div>
                       <div class="col-lg-8" style="width: 100%">
                         <input type="text" class="form-control" name="daftar_email" placeholder="Email" style="padding: 5px 5px;height: inherit;font-size: 12px; width: 99%">
                       </div>
                       <div class="col-lg-8" style="width: 100%">
-                        <input type="text" class="form-control" name="pass" placeholder="Password" style="padding: 5px 5px;height: inherit;font-size: 12px; width: 99%">
+                        <input type="password" class="form-control" name="pass" placeholder="Password" style="padding: 5px 5px;height: inherit;font-size: 12px; width: 99%">
                       </div>
                       <div class="col-lg-8" style="width: 100%">
-                        <input type="text" class="form-control" name="re_pass" placeholder="Masukkan lagi Password" style="padding: 5px 5px;height: inherit;font-size: 12px; width: 99%">
+                        <input type="password" class="form-control" name="re_pass" placeholder="Masukkan lagi Password" style="padding: 5px 5px;height: inherit;font-size: 12px; width: 99%">
                       </div>
                     </div>
                   </fieldset>

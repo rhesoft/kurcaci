@@ -539,6 +539,163 @@ EOD;
       ->build('history-point');
   }
   
+  function detail_biodata(){
+    $id_users = $this->session->userdata("id");
+    $biodata = $this->global_models->get("hrm_prospective_biodata", array("id_users" => $this->session->userdata("id")));
+    if($this->session->userdata("id_portal_company")){
+      $company = $this->global_models->get_query("SELECT A.*, B.title AS bidang_usaha, C.title AS propinsi"
+        . " FROM portal_company AS A"
+        . " LEFT JOIN portal_bidang_usaha AS B ON A.id_portal_bidang_usaha = B.id_portal_bidang_usaha"
+        . " LEFT JOIN portal_lokasi AS C ON A.id_portal_lokasi = C.id_portal_lokasi"
+        . " WHERE A.id_portal_company = {$this->session->userdata("id_portal_company")}");
+    }
+    $this->template->build('detail-biodata', 
+      array(
+            'url'         => base_url()."themes/".DEFAULTTHEMES."/",
+            'menu'        => "users/detail-biodata",
+            'title'       => lang("portal_detail_biodata"),
+            'biodata'     => $biodata,
+            'company'     => $company
+          ));
+    $this->template
+      ->set_layout('default')
+      ->build('detail-biodata');
+  }
+  
+  function edit_biodata(){
+    if($this->input->post()){
+      $pst = $this->input->post();
+      
+      $config['upload_path'] = './files/hrm/prospective_employee/';
+      $config['allowed_types'] = 'gif|jpg|png';
+      $config['max_width']  = '700';
+      $config['max_height']  = '700';
+
+      $this->load->library('upload', $config);
+      $this->load->library('manimage');
+      
+      if($_FILES['photo']['name']){
+        if (  $this->upload->do_upload('photo')){
+          $data = array('upload_data' => $this->upload->data());
+          $this->manimage->load('./files/hrm/prospective_employee/'.$data['upload_data']['file_name']); 
+          $this->manimage->resizeToWidth(270); 
+          $this->manimage->save('./files/hrm/prospective_employee/270/'.$data['upload_data']['file_name']);
+
+          $this->manimage->load('./files/hrm/prospective_employee/'.$data['upload_data']['file_name']); 
+          $this->manimage->resizeToWidth(50); 
+          $this->manimage->save('./files/hrm/prospective_employee/50/'.$data['upload_data']['file_name']);
+        }
+        else{
+          print $this->upload->display_errors();
+          print "<br /> <a href='".site_url("portal/master-portal/add-new-company/".$id_portal_company)."'>Back</a>";
+          die;
+        }
+      }
+      
+      if($pst['id_hrm_prospective_biodata']){
+        $kirim = array(
+          "id_users"                  => $this->session->userdata("id"),
+          "title"                     => $pst['title'],
+          "first_name"                => $pst['first_name'],
+          "last_name"                 => $pst['last_name'],
+          "sex"                       => $pst['sex'],
+          "tinggi_badan"              => $pst['tinggi_badan'],
+          "berat_badan"               => $pst['berat_badan'],
+          "tempat_lahir"              => $pst['tempat_lahir'],
+          "tanggal_lahir"             => $pst['tanggal_lahir'],
+          "address"                   => $pst['address'],
+          "telphone"                  => $pst['telphone'],
+          "handphone"                 => $pst['handphone'],
+          "status_tinggal"            => $pst['status_tinggal'],
+          "card_id"                   => $pst['card_id'],
+          "about_us"                  => $pst['about_us'],
+          "note"                      => $pst['note'],
+          "update_by_users"           => $this->session->userdata("id"),
+        );
+        if($data['upload_data']['file_name']){
+          $kirim['photo'] = $data['upload_data']['file_name'];
+        }
+        
+        $id_hrm_prospective_biodata = $this->global_models->update("hrm_prospective_biodata", array("id_hrm_prospective_biodata" => $pst['id_hrm_prospective_biodata']), $kirim);
+      }
+      else{
+        $kirim = array(
+          "id_users"                  => $this->session->userdata("id"),
+          "title"                     => $pst['title'],
+          "first_name"                => $pst['first_name'],
+          "last_name"                 => $pst['last_name'],
+          "sex"                       => $pst['sex'],
+          "tinggi_badan"              => $pst['tinggi_badan'],
+          "berat_badan"               => $pst['berat_badan'],
+          "tempat_lahir"              => $pst['tempat_lahir'],
+          "tanggal_lahir"             => $pst['tanggal_lahir'],
+          "address"                   => $pst['address'],
+          "telphone"                  => $pst['telphone'],
+          "handphone"                 => $pst['handphone'],
+          "status_tinggal"            => $pst['status_tinggal'],
+          "card_id"                   => $pst['card_id'],
+          "about_us"                  => $pst['about_us'],
+          "note"                      => $pst['note'],
+          "create_by_users"           => $this->session->userdata("id"),
+          "create_date"               => date("Y-m-d")
+        );
+        if($data['upload_data']['file_name']){
+          $kirim['photo'] = $data['upload_data']['file_name'];
+        }
+        
+        $id_hrm_prospective_biodata = $this->global_models->insert("hrm_prospective_biodata", $kirim);
+      }
+      
+      if($id_hrm_prospective_biodata){
+        $this->session->set_flashdata('success', 'Data tersimpan');
+      }
+      else{
+        $this->session->set_flashdata('notice', 'Data tidak tersimpan');
+      }
+      redirect("users/detail-biodata");
+      
+    }
+    else{
+      $detail = $this->global_models->get("hrm_prospective_biodata", array("id_users" => $this->session->userdata("id")));
+      
+      $css = "<link href='".base_url()."themes/".DEFAULTTHEMES."/css/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css' rel='stylesheet' type='text/css' />"
+        . "<link href='".base_url()."themes/".DEFAULTTHEMES."/css/datepicker/datepicker3.css' rel='stylesheet' type='text/css' />";
+      $foot = "
+        <script src='".base_url()."themes/".DEFAULTTHEMES."/js/plugins/ckeditor/ckeditor.js' type='text/javascript'></script>
+        <script src='".base_url()."themes/".DEFAULTTHEMES."/js/plugins/datepicker/bootstrap-datepicker.js' type='text/javascript'></script>
+        <script type='text/javascript'>
+            $(function() {
+              CKEDITOR.replace('editor1');
+              CKEDITOR.replace('editor2');
+              CKEDITOR.replace('editor3');
+              
+              $( '#tanggal_lahir' ).datepicker({
+                showOtherMonths: true,
+                format: 'yyyy-mm-dd',
+                selectOtherMonths: true,
+                selectOtherYears: true
+              });
+            });
+        </script>
+        ";
+      $this->template->build("biodata", 
+        array(
+              'url'         => base_url()."themes/".DEFAULTTHEMES."/",
+              'menu'        => 'users/detail-biodata',
+              'title'       => "Form Biodata",
+              'detail'      => $detail,
+              'breadcrumb'  => array(
+                    "Biodata"  => "users/detail-biodata"
+                ),
+              'css'         => $css,
+              'foot'        => $foot
+            ));
+      $this->template
+        ->set_layout('form')
+        ->build("biodata");
+    }
+  }
+  
 }
 
 /* End of file welcome.php */

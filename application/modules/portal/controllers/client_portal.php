@@ -5,7 +5,7 @@ class Client_portal extends MX_Controller {
   function __construct() {
     $this->load->library('manimage');
     $this->menu = $this->cek();
-    $this->cek_session();
+//    $this->cek_session();
   }
   
   private function cek_session(){
@@ -14,24 +14,6 @@ class Client_portal extends MX_Controller {
     }
   }
   
-  function lokasi(){
-    $list = $this->global_models->get("portal_lokasi");
-    
-    $menutable = '
-      <li><a href="'.site_url("portal/master-portal/add-new-lokasi").'"><i class="icon-plus"></i> Add New</a></li>
-      ';
-    $this->template->build('master/lokasi', 
-      array(
-            'url'         => base_url()."themes/".DEFAULTTHEMES."/",
-            'menu'        => "portal/master-portal/lokasi",
-            'data'        => $list,
-            'title'       => lang("portal_lokasi"),
-            'menutable'   => $menutable,
-          ));
-    $this->template
-      ->set_layout('datatables')
-      ->build('master/lokasi');
-  }
   
   private function form_promo($detail){
     $css = "<link href='".base_url()."themes/".DEFAULTTHEMES."/css/jQueryUI/jquery-ui-1.10.3.custom.min.css' rel='stylesheet' type='text/css' />"
@@ -198,6 +180,278 @@ class Client_portal extends MX_Controller {
     $this->template
       ->set_layout('datatables')
       ->build('client/promo');
+  }
+  
+  function add_new_company(){
+    if($this->input->post()){
+      $pst = $this->input->post();
+      
+      $config['upload_path'] = './files/portal/company/logo/';
+      $config['allowed_types'] = 'gif|jpg|png';
+      $config['max_width']  = '700';
+      $config['max_height']  = '700';
+
+      $this->load->library('upload', $config);
+      
+      if($_FILES['logo']['name']){
+        if (  $this->upload->do_upload('logo')){
+          $data = array('upload_data' => $this->upload->data());
+        }
+        else{
+          print $this->upload->display_errors();
+          print "<br /> <a href='".site_url("portal/client-portal/add-new-company/")."'>Back</a>";
+          die;
+        }
+      }
+      
+      if($pst['id_detail']){
+        $kirim = array(
+            "title"           => $pst['title'],
+            "nicename"        => $this->global_models->nicename($pst['title'], "portal_company", "id_portal_company"),
+            "email"           => $pst['email'],
+            "handphone"       => $pst['handphone'],
+            "telphone"        => $pst['telphone'],
+            "bbm"             => $pst['bbm'],
+            "facebook"        => $pst['facebook'],
+            "status"          => $pst['status'],
+            "note"            => $pst['note'],
+            "update_by_users" => $this->session->userdata("id"),
+        );
+        if($data['upload_data']['file_name']){
+          $kirim['logo'] = $data['upload_data']['file_name'];
+        }
+        $id_portal_company = $this->global_models->update("portal_company", array("id_portal_company" => $pst['id_detail']),$kirim);
+        $newdata = array(
+          'company_nicename' => $kirim['nicename'],
+        );
+        $this->session->set_userdata($newdata);
+      }
+      else{
+        $kirim = array(
+            "title"           => $pst['title'],
+            "nicename"        => $this->global_models->nicename($pst['title'], "portal_company", "id_portal_company"),
+            "email"           => $pst['email'],
+            "handphone"       => $pst['handphone'],
+            "telphone"        => $pst['telphone'],
+            "bbm"             => $pst['bbm'],
+            "facebook"        => $pst['facebook'],
+            "status"          => $pst['status'],
+            "note"            => $pst['note'],
+            "create_by_users" => $this->session->userdata("id"),
+            "create_date"     => date("Y-m-d")
+        );
+        if($data['upload_data']['file_name']){
+          $kirim['logo'] = $data['upload_data']['file_name'];
+        }
+        $id_portal_company = $this->global_models->insert("portal_company", $kirim);
+        $global_settings_company_position = $this->nbscache->get_explode("global-settings", "global_settings_company_position");
+        $this->global_models->insert("portal_company_users", array("id_portal_company" => $id_portal_company, "id_users" => $this->session->userdata("id"), "id_portal_company_position" => $global_settings_company_position[1]));
+        
+        $newdata = array(
+          'id_portal_company' => $id_portal_company,
+          'id_portal_company_position' => $global_settings_company_position[1],
+          'company_nicename' => $kirim['nicename'],
+        );
+        $this->session->set_userdata($newdata);
+        
+      }
+      if($id_portal_company){
+        $this->session->set_flashdata('success', 'Data tersimpan');
+      }
+      else{
+        $this->session->set_flashdata('notice', 'Data tidak tersimpan');
+      }
+      redirect("portal/client-portal/add-new-company-address");
+      
+    }
+    else{
+      $id_portal_company = $this->global_models->get_field("portal_company_users", "id_portal_company", array("id_users" => $this->session->userdata("id")));
+      $detail = $this->global_models->get("portal_company", array("id_portal_company" => $id_portal_company));
+      
+      $css = "<link href='".base_url()."themes/".DEFAULTTHEMES."/css/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css' rel='stylesheet' type='text/css' />";
+      $foot = "
+        <script src='".base_url()."themes/".DEFAULTTHEMES."/js/plugins/ckeditor/ckeditor.js' type='text/javascript'></script>
+        <script type='text/javascript'>
+            $(function() {
+            
+              CKEDITOR.replace('editor3');
+            });
+        </script>
+        ";
+      
+      $this->template->build("client/add-new-company", 
+        array(
+              'url'         => base_url()."themes/".DEFAULTTHEMES."/",
+              'menu'        => 'users/detail-biodata',
+              'title'       => "Create Company",
+              'detail'      => $detail,
+              'breadcrumb'  => array(
+                    "Biodata"  => "users/detail-biodata"
+                ),
+              'css'         => $css,
+              'foot'        => $foot
+            ));
+      $this->template
+        ->set_layout('form')
+        ->build("client/add-new-company");
+    }
+  }
+  
+  function add_new_company_address(){
+    if($this->input->post()){
+      $pst = $this->input->post();
+      if($pst['id_detail']){
+        $kirim = array(
+            "address"         => $pst['address'],
+            "id_portal_lokasi" => $pst['id_portal_lokasi'],
+            "update_by_users" => $this->session->userdata("id"),
+        );
+        $id_portal_company = $this->global_models->update("portal_company", array("id_portal_company" => $pst['id_detail']),$kirim);
+      }
+      if($id_portal_company){
+        $this->session->set_flashdata('success', 'Data tersimpan');
+      }
+      else{
+        $this->session->set_flashdata('notice', 'Data tidak tersimpan');
+      }
+      redirect("portal/client-portal/add-new-company-bidang-usaha");
+    }
+    else{
+      $detail = $this->global_models->get("portal_company", array("id_portal_company" => $this->session->userdata("id_portal_company")));
+      
+      $css = "<link href='".base_url()."themes/".DEFAULTTHEMES."/css/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css' rel='stylesheet' type='text/css' />"
+        . "<link href='".base_url()."themes/".DEFAULTTHEMES."/css/jQueryUI/jquery-ui-1.10.3.custom.min.css' rel='stylesheet' type='text/css' />";
+      $foot = "
+        <script src='".base_url()."themes/".DEFAULTTHEMES."/js/plugins/ckeditor/ckeditor.js' type='text/javascript'></script>
+        <script src='".base_url()."themes/".DEFAULTTHEMES."/js/jquery.ui.autocomplete.min.js' type='text/javascript'></script>
+        <script type='text/javascript'>
+            $(function() {
+            
+            
+              $( '#portal_lokasi' ).autocomplete({
+                source: '".site_url("portal/master-portal/auto-lokasi")."',
+                minLength: 1,
+                select: function( event, ui ) {
+                  $('#id_portal_lokasi').val(ui.item.id);
+                }
+              });
+            
+              CKEDITOR.replace('editor1');
+            });
+        </script>
+        ";
+      
+      $this->template->build("client/add-new-company-address", 
+        array(
+              'url'         => base_url()."themes/".DEFAULTTHEMES."/",
+              'menu'        => 'users/detail-biodata',
+              'title'       => "Company Address",
+              'detail'      => $detail,
+              'breadcrumb'  => array(
+                    "Biodata"  => "users/detail-biodata",
+                    "Company"  => "portal/client-portal/add-new-company"
+                ),
+              'css'         => $css,
+              'foot'        => $foot
+            ));
+      $this->template
+        ->set_layout('form')
+        ->build("client/add-new-company-address");
+    }
+  }
+  
+  function add_new_company_bidang_usaha(){
+    if($this->input->post()){
+      $pst = $this->input->post();
+      if($pst['id_detail']){
+        $kirim = array(
+            "id_portal_bidang_usaha" => $pst['id_portal_bidang_usaha'],
+            "update_by_users" => $this->session->userdata("id"),
+        );
+        $id_portal_company = $this->global_models->update("portal_company", array("id_portal_company" => $pst['id_detail']),$kirim);
+      }
+      if($id_portal_company){
+        $this->session->set_flashdata('success', 'Data tersimpan');
+      }
+      else{
+        $this->session->set_flashdata('notice', 'Data tidak tersimpan');
+      }
+      redirect("portal/client-portal/add-new-company-about-us");
+    }
+    else{
+      $detail = $this->global_models->get("portal_company", array("id_portal_company" => $this->session->userdata("id_portal_company")));
+      $portal_bidang_usaha = $this->global_models->get("portal_bidang_usaha", array("parent >" => 0));
+      
+      $this->template->build("client/add-new-company-bidang-usaha", 
+        array(
+              'url'         => base_url()."themes/".DEFAULTTHEMES."/",
+              'menu'        => 'users/detail-biodata',
+              'title'       => "Company Business Fields",
+              'detail'      => $detail,
+              'portal_bidang_usaha' => $portal_bidang_usaha,
+              'breadcrumb'  => array(
+                    "Biodata"  => "users/detail-biodata",
+                    "Company"  => "portal/client-portal/add-new-company",
+                    "Company Address"  => "portal/client-portal/add-new-company-address"
+                ),
+            ));
+      $this->template
+        ->set_layout('form')
+        ->build("client/add-new-company-bidang-usaha");
+    }
+  }
+  
+  function add_new_company_about_us(){
+    if($this->input->post()){
+      $pst = $this->input->post();
+      if($pst['id_detail']){
+        $kirim = array(
+            "about_us" => $pst['about_us'],
+            "update_by_users" => $this->session->userdata("id"),
+        );
+        $id_portal_company = $this->global_models->update("portal_company", array("id_portal_company" => $pst['id_detail']),$kirim);
+      }
+      if($id_portal_company){
+        $this->session->set_flashdata('success', 'Data tersimpan');
+      }
+      else{
+        $this->session->set_flashdata('notice', 'Data tidak tersimpan');
+      }
+      redirect("users/detail-biodata");
+    }
+    else{
+      $detail = $this->global_models->get("portal_company", array("id_portal_company" => $this->session->userdata("id_portal_company")));
+      $css = "<link href='".base_url()."themes/".DEFAULTTHEMES."/css/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css' rel='stylesheet' type='text/css' />";
+      $foot = "
+        <script src='".base_url()."themes/".DEFAULTTHEMES."/js/plugins/ckeditor/ckeditor.js' type='text/javascript'></script>
+        <script type='text/javascript'>
+            $(function() {
+            
+              CKEDITOR.replace('editor1');
+            });
+        </script>
+        ";
+      
+      $this->template->build("client/add-new-company-about-us", 
+        array(
+              'url'         => base_url()."themes/".DEFAULTTHEMES."/",
+              'menu'        => 'users/detail-biodata',
+              'title'       => "Company Business Fields",
+              'detail'      => $detail,
+              'portal_bidang_usaha' => $portal_bidang_usaha,
+              'css'         => $css,
+              'foot'        => $foot,
+              'breadcrumb'  => array(
+                    "Biodata"  => "users/detail-biodata",
+                    "Company"  => "portal/client-portal/add-new-company",
+                    "Company Address"  => "portal/client-portal/add-new-company-address",
+                    "Company Business Fields"  => "portal/client-portal/add-new-company-bidang-usaha"
+                ),
+            ));
+      $this->template
+        ->set_layout('form')
+        ->build("client/add-new-company-about-us");
+    }
   }
   
 }

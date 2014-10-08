@@ -81,7 +81,7 @@ class Dashboard extends MX_Controller {
     $this->load->library('encrypt');
     if($this->input->post()){
       $pst = $this->input->post();
-      $this->debug($pst, true);
+//      $this->debug($pst, true);
       if($pst['submit'] == "login"){
         $data = $this->global_models->get("m_users", array("email" => $pst['email']));
         if($data){
@@ -113,10 +113,95 @@ class Dashboard extends MX_Controller {
         redirect($pst['lokasi']);
       }
       else{
-        $this->debug($pst, true);
+//        $this->debug($pst, true);
+//        insert to users
+        if($this->cek_form($pst) === TRUE){
+          $kirim = array(
+            "name"            => $pst['first_name']." ".$pst['last_name'],
+            "pass"            => $this->encrypt->encode($pst['pass']),
+            "email"           => $pst['daftar_email'],
+            "id_status_user"  => mt_rand(1111111111, 9999999999),
+          );
+          $id_users = $this->global_models->insert("m_users", $kirim);
+//        set privilege
+          $global_settings_privilege_new_users = $this->nbscache->get_explode("global-settings", "global_settings_privilege_new_users");
+          
+          $hasil_pr = $this->global_models->insert("d_user_privilege", 
+                  array(
+                      "id_privilege"  =>  $global_settings_privilege_new_users[1],
+                      "id_users"  =>  $id_users
+                      ));
+//        kirim konfirmasi email
+//        
+          $this->email->from('no-reply@technomotor.co.id', 'Administrator');
+          $this->email->to($kirim["email"]);
+
+          $this->email->subject('Pendaftaran : Konfirmasi Email');
+          $this->email->message("
+            Berikut adalah akunt untuk akses Outlet Monitoring :
+            link => ".base_url()."
+            user => {$email_user[0]->name}
+            pass => {$new_password}
+            ");
+
+          if($this->email->send() === TRUE){
+            $this->session->set_flashdata('daftar_berhasil_email_send', "Email Konfirmasi Terkirim");
+          }
+          else{
+            $this->session->set_flashdata('daftar_gagal_email_send', "Email Konfirmasi Gagal Terkirim");
+          }
+//        
+//        login first time
+          $newdata = array(
+            'name'  => $kirim['name'],
+            'ename'  => substr(md5(date("d")), 0, 5).$this->encrypt->encode($kirim['name']),
+            'epass'  => substr(md5(date("d")), -5).$pst['pass'],
+            'email'     => $kirim['email'],
+            'id'     => $id_users,
+            'outlet'     => 0,
+            'privilege'     => $hasil_pr,
+            'id_privilege'     => $global_settings_privilege_new_users[1],
+            'dashbord'     => $this->global_models->get_field("m_privilege", "dashbord", array("id_privilege" => $global_settings_privilege_new_users[1])),
+            'logged_in' => TRUE
+          );
+          $this->session->set_userdata($newdata);
+        }
       }
     }
-    redirect("");
+    redirect($pst['lokasi']);
+  }
+  
+  function cek_form($pst){
+//    cek ketersediaan first name
+    if(!$pst['first_name']){
+      $this->session->set_flashdata('daftar_gagal_first_name', $pst['first_name']);
+      $salah = "nbs";
+    }
+//    cek ketersediaan email
+    if(!$pst['daftar_email']){
+      $this->session->set_flashdata('daftar_gagal_email', $pst['daftar_email']);
+      $salah = "nbs";
+    }
+//    cek ketersediaan pass
+    if(!$pst['pass']){
+      $this->session->set_flashdata('daftar_gagal_pass', $pst['pass']);
+      $salah = "nbs";
+    }
+//    cek ketersediaan repass
+    if(!$pst['re_pass']){
+      $this->session->set_flashdata('daftar_gagal_re_pass', $pst['re_pass']);
+      $salah = "nbs";
+    }
+//    cek kesamaan pass dan repass
+    if($pst['pass'] != $pst['re_pass']){
+      $this->session->set_flashdata('daftar_gagal_cek_pass', 'Password dan Ulangi Password tidak sama');
+      $salah = "nbs";
+    }
+    
+    if($salah == "nbs"){
+      redirect($pst['lokasi']);
+    }
+    return TRUE;
   }
 
 }

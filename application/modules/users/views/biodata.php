@@ -23,12 +23,6 @@
                 </div>
                 
                 <div class="control-group">
-                  <label>Middle Name</label>
-                    <?php print $this->form_eksternal->form_input('middle_name', $detail[0]->middle_name, 'class="form-control input-sm" placeholder="Middle Name"');
-                    ?>
-                </div>
-                
-                <div class="control-group">
                   <label>Last Name</label>
                     <?php print $this->form_eksternal->form_input('last_name', $detail[0]->last_name, 'class="form-control input-sm" placeholder="Last Name"');
                     ?>
@@ -48,7 +42,7 @@
                     </div><!-- /.col-lg-6 -->
                     <div class="col-lg-6">
                         <div class="input-group">
-                            <?php print $this->form_eksternal->form_input('tinggi_badan', $detail[0]->tinggi_badan, 'class="form-control input-sm" placeholder="Berat Badan"')?>
+                            <?php print $this->form_eksternal->form_input('berat_badan', $detail[0]->berat_badan, 'class="form-control input-sm" placeholder="Berat Badan"')?>
                         </div><!-- /input-group -->
                     </div><!-- /.col-lg-6 -->
                 </div>
