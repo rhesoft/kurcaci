@@ -12,6 +12,10 @@
         <link href="<?php print $url?>css/ionicons.min.css" rel="stylesheet" type="text/css" />
         <link href="<?php print $url?>css/AdminLTE.css" rel="stylesheet" type="text/css" />
         <link href="<?php print $url?>css/simpletree.css" rel="stylesheet">
+        <!--<link href="<?php print $url?>css/jQueryUI/jquery-ui.min.css" rel="stylesheet">-->
+        <link rel="stylesheet" media="all" type="text/css" href="http://code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css">
+<!--        <link href="<?php print $url?>css/jQueryUI/jquery-ui.structure.min.css" rel="stylesheet">
+        <link href="<?php print $url?>css/jQueryUI/jquery-ui.theme.min.css" rel="stylesheet">-->
         <link href='<?php print $url?>css/datatables/dataTables.bootstrap.css' rel='stylesheet' type='text/css' />
         <?php print $css;?>
     </head>
@@ -161,8 +165,10 @@ EOD;
         </div>
 
         
-        <script src="<?php print $url?>js/jquery.min.js"></script>
-        <script src="<?php print $url?>js/jquery-ui-1.10.3.min.js" type="text/javascript"></script>
+        <!--<script src="<?php print $url?>js/jquery.min.js"></script>-->
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+        <!--<script src="<?php print $url?>js/jquery-ui-1.10.3.min.js" type="text/javascript"></script>-->
+        <script src="<?php print $url?>js/jquery-ui.min.js" type="text/javascript"></script>
         <script src="<?php print $url?>js/bootstrap.min.js" type="text/javascript"></script>
         <script src="<?php print $url?>js/AdminLTE/app.js" type="text/javascript"></script>
 <script type="text/javascript" charset="utf-8" src="<?php print $url?>js/simpletreemenu.js"></script>

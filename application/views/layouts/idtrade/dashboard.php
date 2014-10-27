@@ -98,15 +98,17 @@ $category = unserialize($category_temp[1]);
                 <?php
                 foreach($category AS $key => $cate){
                   $sub_category_temp = $this->nbscache->get_explode("sub-category", $key);
-                  $sub_category = unserialize($sub_category_temp[1]);
-                  print "<li>"
-                  . "<a href='javascript:void(0);' class='btn btn-primary btn-block' style='text-align: left; white-space: normal'>{$cate['name']}</a>"
-                  . "<ul class='subkategori-nav'>";
-                  foreach($sub_category AS $key_sub => $subcate){
-                    print "<li><a href='".site_url("produk/kategori/".$subcate['nicename'])."' class='btn btn-primary btn-block'>{$subcate['name']}</a></li>";
+                  if($sub_category_temp[1]){
+                    $sub_category = unserialize($sub_category_temp[1]);
+                    print "<li>"
+                    . "<a href='javascript:void(0);' class='btn btn-primary btn-block' style='text-align: left; white-space: normal'>{$cate['name']}</a>"
+                    . "<ul class='subkategori-nav'>";
+                    foreach($sub_category AS $key_sub => $subcate){
+                      print "<li><a href='".site_url("produk/kategori/".$subcate['nicename'])."' class='btn btn-primary btn-block'>{$subcate['name']}</a></li>";
+                    }
+                    print "</ul>"
+                    . "</li>";
                   }
-                  print "</ul>"
-                  . "</li>";
                 }
                 ?>
               </ul>

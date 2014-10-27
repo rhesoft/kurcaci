@@ -301,6 +301,7 @@ class Portal_mrp extends MX_Controller {
                 $('#create_sub').show();
                 $('#mrp_sub_product_category' ).autocomplete('option', 'source', '".site_url("mrp/master-mrp/auto-sub-product-category")."/'+$('#category_multi').val());
               });
+              
               $( '#mrp_sub_product_category' ).autocomplete({
                 source: '".site_url("mrp/master-mrp/auto-sub-product-category")."/',
                 minLength: 1,

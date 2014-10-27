@@ -11,6 +11,8 @@
     Core: General style
 ----------------------------
 */
+#ui-datepicker-div, .ui-datepicker{ font-size: 85%; }
+.ui-autocomplete, .ui-menu-item{ font-size: 85%; }
 html,
 body {
   overflow-x: hidden!important;
