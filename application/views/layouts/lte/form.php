@@ -11,8 +11,9 @@
         <link href="<?php print $url?>css/font-awesome.min.css" rel="stylesheet" type="text/css" />
         <link href="<?php print $url?>css/ionicons.min.css" rel="stylesheet" type="text/css" />
         <link href="<?php print $url?>css/AdminLTE.css" rel="stylesheet" type="text/css" />
-        <link href="<?php print $url?>css/jquery-ui-1.8.16.custom.css" rel="stylesheet" type="text/css" />
+        <!--<link href="<?php print $url?>css/jquery-ui-1.8.16.custom.css" rel="stylesheet" type="text/css" />-->
         <link href="<?php print $url?>css/simpletree.css" rel="stylesheet">
+        <link rel="stylesheet" media="all" type="text/css" href="http://code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css">
         <?php print $css;?>
     </head>
     <body class="skin-blue">
@@ -155,11 +156,11 @@ EOD;
         </div>
 
         
-        <script src="<?php print $url?>js/jquery.min.js"></script>
-        <script src="<?php print $url?>js/jquery-ui-1.10.3.min.js" type="text/javascript"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+        <script src="<?php print $url?>js/jquery-ui.min.js" type="text/javascript"></script>
         <script src="<?php print $url?>js/bootstrap.min.js" type="text/javascript"></script>
         <script src="<?php print $url?>js/AdminLTE/app.js" type="text/javascript"></script>
-<script type="text/javascript" charset="utf-8" src="<?php print $url?>js/simpletreemenu.js"></script>
+        <script type="text/javascript" charset="utf-8" src="<?php print $url?>js/simpletreemenu.js"></script>
         <script type="text/javascript">
 
         ddtreemenu.createTree("treemenu2", false);

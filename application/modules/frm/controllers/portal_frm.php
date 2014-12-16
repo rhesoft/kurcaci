@@ -432,7 +432,7 @@ EOD;
       . "</script>";
     if($detail[0]->status == 1){
       $menutable = '
-          <li><a href="'.site_url("frm/portal-frm/add-transaksi-terperinci").'"><i class="icon-plus"></i>Transaksi Terperinci</a></li>
+          <li><a href="'.site_url("frm/portal-frm/add-transaksi-terperinci/{$tahun}/{$bulan}").'"><i class="icon-plus"></i>Transaksi Terperinci</a></li>
           ';
     }
     $this->template->build('portal/transaksi-bulanan', 
@@ -708,6 +708,50 @@ EOD;
     . "{$this->pagination->create_links_ajax()}"
     . "</ul>";
     die;
+  }
+  
+  function add_transaksi_terperinci($tahun, $bulan){
+    if($this->input->post()){
+      
+    }
+    else{
+      $journal = $this->global_models->get("frm_journal", array("status" => 1, "id_portal_company" => $this->session->userdata("id_portal_company")));
+      $css = ""
+      . "<link href='".base_url()."themes/".DEFAULTTHEMES."/css/jquery-ui-timepicker-addon.min.css' rel='stylesheet' type='text/css' />";
+    $foot .= ""
+      . "<script src='".base_url()."themes/".DEFAULTTHEMES."/js/jquery-ui-timepicker-addon.min.js' type='text/javascript'></script>"
+      . "<script src='".base_url()."themes/".DEFAULTTHEMES."/js/jquery.price_format.1.8.min.js' type='text/javascript'></script>"
+      . "<script src='".base_url()."themes/".DEFAULTTHEMES."/js/jquery.ui.autocomplete.min.js' type='text/javascript'></script>"
+      . "<script>"
+
+      . "$(function() {"
+      
+      . "  $( '#tanggal' ).datetimepicker({"
+      . "   dateFormat: 'yy-mm-dd',"
+      . "   timeFormat: 'HH:mm',"
+      . "  });"
+      . "});"
+      . "</script>";
+      $this->template->build('portal/add-transaksi-terperinci', 
+        array(
+              'url'         => base_url()."themes/".DEFAULTTHEMES."/",
+              'menu'        => "frm/portal-frm/catatan-transaksi",
+              'title'       => lang("frm_transaksi"),
+              'breadcrumb'  => array(
+                  lang("frm_catatan_transaksi")  => "frm/portal-frm/catatan-transaksi",
+                  lang("frm_transaksi_bulanan")  => "frm/portal-frm/transaksi-bulanan/{$journal[0]->year}/{$journal[0]->month}"
+              ),
+              'detail'      => $data,
+              'foot'        => $foot,
+              'css'         => $css,
+              'kategori'    => $kategori,
+              'tahun'       => $journal[0]->year,
+              'bulan'       => $journal[0]->month,
+            ));
+      $this->template
+        ->set_layout('form')
+        ->build('portal/add-transaksi-terperinci');
+    }
   }
   
 }
